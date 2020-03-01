@@ -1,0 +1,8 @@
+C:\Users\ipetr\source\repos\ConverterToXml\ConverterToXml\bin\Debug\netcoreapp3.1\ConverterToXml.deps.json
+C:\Users\ipetr\source\repos\ConverterToXml\ConverterToXml\bin\Debug\netcoreapp3.1\ConverterToXml.dll
+C:\Users\ipetr\source\repos\ConverterToXml\ConverterToXml\obj\Debug\netcoreapp3.1\ConverterToXml.AssemblyInfoInputs.cache
+C:\Users\ipetr\source\repos\ConverterToXml\ConverterToXml\obj\Debug\netcoreapp3.1\ConverterToXml.AssemblyInfo.cs
+C:\Users\ipetr\source\repos\ConverterToXml\ConverterToXml\bin\Debug\netcoreapp3.1\ConverterToXml.pdb
+C:\Users\ipetr\source\repos\ConverterToXml\ConverterToXml\obj\Debug\netcoreapp3.1\ConverterToXml.dll
+C:\Users\ipetr\source\repos\ConverterToXml\ConverterToXml\obj\Debug\netcoreapp3.1\ConverterToXml.pdb
+C:\Users\ipetr\source\repos\ConverterToXml\ConverterToXml\obj\Debug\netcoreapp3.1\ConverterToXml.csprojAssemblyReference.cache
