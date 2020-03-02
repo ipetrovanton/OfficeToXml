@@ -5677,11 +5677,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ipetr\\source\\repos\\ConverterToXml\\ConverterToXml.Test\\ConverterToXml.Test.csproj",
+      "projectUniqueName": "E:\\MyProjects\\C#\\ConverterToXml\\ConverterToXml.Test\\ConverterToXml.Test.csproj",
       "projectName": "ConverterToXml.Test",
-      "projectPath": "C:\\Users\\ipetr\\source\\repos\\ConverterToXml\\ConverterToXml.Test\\ConverterToXml.Test.csproj",
+      "projectPath": "E:\\MyProjects\\C#\\ConverterToXml\\ConverterToXml.Test\\ConverterToXml.Test.csproj",
       "packagesPath": "C:\\Users\\ipetr\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ipetr\\source\\repos\\ConverterToXml\\ConverterToXml.Test\\obj\\",
+      "outputPath": "E:\\MyProjects\\C#\\ConverterToXml\\ConverterToXml.Test\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -5700,8 +5700,8 @@
       "frameworks": {
         "netcoreapp3.1": {
           "projectReferences": {
-            "C:\\Users\\ipetr\\source\\repos\\ConverterToXml\\ConverterToXml\\ConverterToXml.csproj": {
-              "projectPath": "C:\\Users\\ipetr\\source\\repos\\ConverterToXml\\ConverterToXml\\ConverterToXml.csproj"
+            "E:\\MyProjects\\C#\\ConverterToXml\\ConverterToXml\\ConverterToXml.csproj": {
+              "projectPath": "E:\\MyProjects\\C#\\ConverterToXml\\ConverterToXml\\ConverterToXml.csproj"
             }
           }
         }

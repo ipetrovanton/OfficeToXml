@@ -89,11 +89,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ipetr\\source\\repos\\ConverterToXml\\ConverterToXml\\ConverterToXml.csproj",
+      "projectUniqueName": "E:\\MyProjects\\C#\\ConverterToXml\\ConverterToXml\\ConverterToXml.csproj",
       "projectName": "ConverterToXml",
-      "projectPath": "C:\\Users\\ipetr\\source\\repos\\ConverterToXml\\ConverterToXml\\ConverterToXml.csproj",
+      "projectPath": "E:\\MyProjects\\C#\\ConverterToXml\\ConverterToXml\\ConverterToXml.csproj",
       "packagesPath": "C:\\Users\\ipetr\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ipetr\\source\\repos\\ConverterToXml\\ConverterToXml\\obj\\",
+      "outputPath": "E:\\MyProjects\\C#\\ConverterToXml\\ConverterToXml\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
