@@ -137,7 +137,10 @@ namespace ConverterToXml.Converters
 
         public string ConvertByFile(string path)
         {
-            throw new NotImplementedException();
+            using (FileStream fs = File.OpenRead(path))
+            {
+                return Convert(fs);
+            }
         }
     }
 }
