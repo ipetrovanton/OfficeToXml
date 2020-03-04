@@ -199,3 +199,7 @@ E:\MyProjects\C#\ConverterToXml\ConverterToXml.Test\obj\Debug\netcoreapp3.1\Conv
 E:\MyProjects\C#\ConverterToXml\ConverterToXml.Test\obj\Debug\netcoreapp3.1\ConverterToXml.Test.csproj.CopyComplete
 E:\MyProjects\C#\ConverterToXml\ConverterToXml.Test\obj\Debug\netcoreapp3.1\ConverterToXml.Test.dll
 E:\MyProjects\C#\ConverterToXml\ConverterToXml.Test\obj\Debug\netcoreapp3.1\ConverterToXml.Test.pdb
+E:\MyProjects\C#\ConverterToXml\ConverterToXml.Test\bin\Debug\netcoreapp3.1\Files\rtf.rtf
+E:\MyProjects\C#\ConverterToXml\ConverterToXml.Test\bin\Debug\netcoreapp3.1\HtmlAgilityPack.dll
+E:\MyProjects\C#\ConverterToXml\ConverterToXml.Test\bin\Debug\netcoreapp3.1\RtfPipe.dll
+E:\MyProjects\C#\ConverterToXml\ConverterToXml.Test\bin\Debug\netcoreapp3.1\System.Xml.XPath.XmlDocument.dll

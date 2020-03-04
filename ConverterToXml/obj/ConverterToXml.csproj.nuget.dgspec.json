@@ -44,6 +44,14 @@
             "DocumentFormat.OpenXml": {
               "target": "Package",
               "version": "[2.10.0, )"
+            },
+            "HtmlAgilityPack": {
+              "target": "Package",
+              "version": "[1.11.21, )"
+            },
+            "RtfPipe": {
+              "target": "Package",
+              "version": "[1.0.7322.27725, )"
             }
           },
           "imports": [
