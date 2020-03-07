@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -16,6 +16,7 @@
   <ItemGroup>
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.10.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
+    <PackageReference Include="NPOI" Version="2.4.1" />
     <PackageReference Include="RtfPipe" Version="1.0.7322.27725" />
   </ItemGroup>
 

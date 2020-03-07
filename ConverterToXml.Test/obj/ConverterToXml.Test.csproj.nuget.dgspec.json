@@ -45,6 +45,12 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "Microsoft.CodeAnalysis.FxCopAnalyzers": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.9.8, )"
+            },
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",
               "version": "[16.5.0, )"
@@ -123,6 +129,10 @@
             "HtmlAgilityPack": {
               "target": "Package",
               "version": "[1.11.21, )"
+            },
+            "NPOI": {
+              "target": "Package",
+              "version": "[2.4.1, )"
             },
             "RtfPipe": {
               "target": "Package",

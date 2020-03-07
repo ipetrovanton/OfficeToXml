@@ -49,6 +49,10 @@
               "target": "Package",
               "version": "[1.11.21, )"
             },
+            "NPOI": {
+              "target": "Package",
+              "version": "[2.4.1, )"
+            },
             "RtfPipe": {
               "target": "Package",
               "version": "[1.0.7322.27725, )"

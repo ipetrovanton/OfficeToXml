@@ -9,7 +9,6 @@ C:\Users\ipetr\source\repos\ConverterToXml\ConverterToXml\obj\Debug\netcoreapp3.
 E:\MyProjects\C#\ConverterToXml\ConverterToXml\bin\Debug\netcoreapp3.1\ConverterToXml.deps.json
 E:\MyProjects\C#\ConverterToXml\ConverterToXml\bin\Debug\netcoreapp3.1\ConverterToXml.dll
 E:\MyProjects\C#\ConverterToXml\ConverterToXml\bin\Debug\netcoreapp3.1\ConverterToXml.pdb
-E:\MyProjects\C#\ConverterToXml\ConverterToXml\obj\Debug\netcoreapp3.1\ConverterToXml.csprojAssemblyReference.cache
 E:\MyProjects\C#\ConverterToXml\ConverterToXml\obj\Debug\netcoreapp3.1\ConverterToXml.AssemblyInfoInputs.cache
 E:\MyProjects\C#\ConverterToXml\ConverterToXml\obj\Debug\netcoreapp3.1\ConverterToXml.AssemblyInfo.cs
 E:\MyProjects\C#\ConverterToXml\ConverterToXml\obj\Debug\netcoreapp3.1\ConverterToXml.dll
