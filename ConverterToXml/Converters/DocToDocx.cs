@@ -15,7 +15,6 @@ namespace ConverterToXml.Converters
             WordDocument doc = new WordDocument(reader);
             WordprocessingDocument docx = WordprocessingDocument.Create(docxPath, DocumentType.Document);
             Converter.Convert(doc, docx);
-            docx.Close();
         }
 
         public Stream ConvertToDocxMemoryStream(Stream stream)
