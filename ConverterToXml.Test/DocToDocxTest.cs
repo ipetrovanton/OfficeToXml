@@ -10,9 +10,9 @@ namespace ConverterToXml.Test
         {
             Converters.DocToDocx converter = new Converters.DocToDocx();
             string curDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            string path = curDir + @"\Files\doc.doc";
-            converter.ConvertToDocx(path, curDir + @"\Files\Result.docx");
-            Assert.True(File.Exists(curDir + @"\Files\Result.docx"));
+            string path = curDir + @"/Files/doc1.doc";
+            converter.ConvertFromFileToDocxFile(path, curDir + @"/Files/Result.docx");
+            Assert.True(File.Exists(curDir + @"/Files/Result.docx"));
         }
     }
 }

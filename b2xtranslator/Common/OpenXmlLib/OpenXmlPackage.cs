@@ -64,8 +64,8 @@ namespace b2xtranslator.OpenXmlLib
             MemoryStream stream = new MemoryStream();
             writer.Open(stream);
             this.WritePackage(writer);
-            byte[] docxStreamArray = stream.ToArray();
             writer.Close();
+            byte[] docxStreamArray = stream.ToArray();
             return docxStreamArray;
         }
 

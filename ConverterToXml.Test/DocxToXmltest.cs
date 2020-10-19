@@ -7,7 +7,7 @@ using Xunit;
 
 namespace ConverterToXml.Test
 {
-    public class DocxToXmltest
+    public class DocxToXmlTest
     {
         [Fact]
         public void XlsxConverterTest_NotNull()

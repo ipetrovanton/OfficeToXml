@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ConverterToXml.Converters
 {
-    public class DocxToXml : IConvertable
+    public class DocxFromDocToXml
     {
         // Id текущего списка
         int CurrentListID = 0;
@@ -59,32 +59,8 @@ namespace ConverterToXml.Converters
 
         }
 
-        /// <summary>
-        /// Создание словаря, ключи которого будут соответствовать id списка в xml документе,
-        /// а значения - id списка в исходном документе
-        /// </summary>
-        /// <param name="listEl">Словарь для списков</param>
-        /// <param name="docBody">Тело документа</param>
-        private void CreateDictList(Dictionary<int, string> listEl, Body docBody)
+        public string Convert(Stream memStream, string charset = "UTF-8")
         {
-            foreach(var el in docBody.ChildElements)
-            {
-                if(el.GetFirstChild<ParagraphProperties>() != null)
-                {
-                    if (el.GetFirstChild<ParagraphProperties>().GetFirstChild<NumberingProperties>() == null)
-                    {
-                        continue;
-                    }
-                    int key = el.GetFirstChild<ParagraphProperties>().GetFirstChild<NumberingProperties>().GetFirstChild<NumberingId>().Val;
-                    listEl[key] = ((DocumentFormat.OpenXml.Wordprocessing.Paragraph)el).ParagraphId.Value;
-                }
-            }
-        }
-
-        public string Convert(Stream memStream)
-        {
-            Dictionary<int, string> listEl = new Dictionary<int, string>();
-
             string xml = string.Empty;
             memStream.Position = 0;
             using (WordprocessingDocument doc = WordprocessingDocument.Open(memStream, false))
@@ -92,20 +68,26 @@ namespace ConverterToXml.Converters
                 StringBuilder sb = new StringBuilder(1000); // врядли в xml будет меньше 1000 символов
                 sb.Append("<?xml version=\"1.0\"?><documents><document>");
                 Body docBody = doc.MainDocumentPart.Document.Body; // тело документа (размеченный текст без стилей)
-                CreateDictList(listEl, docBody);
                 foreach (var element in docBody.ChildElements)
                 {
                     string type = element.GetType().ToString();
                     try
                     {
+                        // такая проверка необходима, когда список является последним видимым элементом в документе, 
+                        // но после него содержаться еще какие-нибудь служебные теги, 
+                        // которые не содержат полезный текст
+                        if (InList)
+                        {
+                            sb.Append($"</li id=\"{CurrentListID}\">");
+                            InList = false;
+                        }
                         switch (type)
                         {
                             case "DocumentFormat.OpenXml.Wordprocessing.Paragraph":
-
-                                if (element.GetFirstChild<ParagraphProperties>() != null && element.GetFirstChild<ParagraphProperties>()
-                                    .GetFirstChild<NumberingProperties>() != null) // список / не список
+                            case "w:p":
+                                if (element.GetFirstChild<ParagraphProperties>().GetFirstChild<NumberingProperties>() != null) // список / не список
                                 {
-                                    if (element.GetFirstChild<ParagraphProperties>().GetFirstChild<NumberingProperties>().GetFirstChild<NumberingId>().Val != CurrentListID)
+                                    if (element.GetFirstChild<ParagraphProperties>().GetFirstChild<NumberingProperties>().GetFirstChild<NumberingId>().Val != CurrentListID) // новый список
                                     {
                                         CurrentListID = element.GetFirstChild<ParagraphProperties>().GetFirstChild<NumberingProperties>().GetFirstChild<NumberingId>().Val;
                                         sb.Append($"<li id=\"{CurrentListID}\">");
@@ -116,19 +98,20 @@ namespace ConverterToXml.Converters
                                     {
                                         ListParagraph(sb, (Paragraph)element);
                                     }
-                                    if (listEl.ContainsValue(((Paragraph)element).ParagraphId.Value))
-                                    {
-                                        sb.Append($"</li id=\"{element.GetFirstChild<ParagraphProperties>().GetFirstChild<NumberingProperties>().GetFirstChild<NumberingId>().Val}\">");
-                                    }
                                     continue;
                                 }
                                 else // не список
                                 {
+                                    if (InList == true)
+                                    {
+                                        sb.Append($"</li id=\"{CurrentListID}\">");
+                                        InList = false;
+                                    }
                                     SimpleParagraph(sb, (Paragraph)element);
                                     continue;
                                 }
                             case "DocumentFormat.OpenXml.Wordprocessing.Table":
-
+                            case "w:tbl":
                                 Table(sb, (Table)element);
                                 continue;
                         }
@@ -142,16 +125,6 @@ namespace ConverterToXml.Converters
                 xml = sb.ToString();
             }
             return xml;
-        }
-
-
-
-        public string ConvertByFile(string path)
-        {
-            using (FileStream fs = File.OpenRead(path))
-            {
-                return Convert(fs);
-            }
         }
     }
 }
