@@ -8,7 +8,7 @@ namespace ConverterToXml.Test
     public class DocToXmlTest
     {
         [Fact]
-        public void DocToDocxConvertToDocx_NotNull()
+        public void DocToDocxConvertToXml_NotNull()
         {
             Converters.DocToXml converter = new Converters.DocToXml();
             string curDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);

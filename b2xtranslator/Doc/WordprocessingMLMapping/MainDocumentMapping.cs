@@ -23,6 +23,7 @@ namespace b2xtranslator.WordprocessingMLMapping
             this._writer.WriteAttributeString("xmlns", "o", null, OpenXmlNamespaces.Office);
             this._writer.WriteAttributeString("xmlns", "w10", null, OpenXmlNamespaces.OfficeWord);
             this._writer.WriteAttributeString("xmlns", "r", null, OpenXmlNamespaces.Relationships);
+            this._writer.WriteAttributeString("xmlns", "w14", null, OpenXmlNamespaces.WordprocessingML2010);
 
             this._writer.WriteStartElement("w", "body", OpenXmlNamespaces.WordprocessingML);
 

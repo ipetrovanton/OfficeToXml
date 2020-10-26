@@ -111,6 +111,7 @@
 
         // WordprocessingML namespaces
         public const string WordprocessingML = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+        public const string WordprocessingML2010 = "http://schemas.microsoft.com/office/word/2010/wordml";
         public const string WordprocessingDrawingML = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
         public const string VectorML = "urn:schemas-microsoft-com:vml";
         public const string MicrosoftWordML = "http://schemas.microsoft.com/office/word/2006/wordml";

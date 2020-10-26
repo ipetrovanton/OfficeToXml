@@ -501,6 +501,8 @@ namespace b2xtranslator.WordprocessingMLMapping
 
             //start paragraph
             this._writer.WriteStartElement("w", "p", OpenXmlNamespaces.WordprocessingML);
+            this._writer.WriteAttributeString("w14", "paraId", OpenXmlNamespaces.WordprocessingML2010, Guid.NewGuid().ToString());
+            this._writer.WriteAttributeString("w14", "textId", OpenXmlNamespaces.WordprocessingML2010, "77777777");
 
             //check for section properties
             if (sectionEnd)
@@ -654,7 +656,7 @@ namespace b2xtranslator.WordprocessingMLMapping
                 if (rev.RsidProp != 0)
                 {
                     string rsidProp = string.Format("{0:x8}", rev.RsidProp);
-                    this._writer.WriteAttributeString("w", "rsidRPr", OpenXmlNamespaces.WordprocessingML, rsidProp);
+                    this._writer.WriteAttributeString("w", "rsidP", OpenXmlNamespaces.WordprocessingML, rsidProp);
                     this._ctx.AddRsid(rsidProp);
                 }
 
