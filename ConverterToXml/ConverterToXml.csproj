@@ -1,11 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Platforms>AnyCPU;x64</Platforms>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
@@ -18,6 +22,11 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
     <PackageReference Include="NPOI" Version="2.4.1" />
     <PackageReference Include="RtfPipe" Version="1.0.7322.27725" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\b2xtranslator\Common\b2xtranslator.csproj" />
+    <ProjectReference Include="..\b2xtranslator\Doc\b2xtranslator.doc.csproj" />
   </ItemGroup>
 
 </Project>

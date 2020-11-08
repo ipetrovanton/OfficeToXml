@@ -59,12 +59,22 @@ namespace ConverterToXml.Converters
 
         }
 
+        /// <summary>
+        /// Создание словаря, ключи которого будут соответствовать id списка в xml документе,
+        /// а значения - id списка в исходном документе
+        /// </summary>
+        /// <param name="listEl">Словарь для списков</param>
+        /// <param name="docBody">Тело документа</param>
         private void CreateDictList(Dictionary<int, string> listEl, Body docBody)
         {
             foreach(var el in docBody.ChildElements)
             {
                 if(el.GetFirstChild<ParagraphProperties>() != null)
                 {
+                    if (el.GetFirstChild<ParagraphProperties>().GetFirstChild<NumberingProperties>() == null)
+                    {
+                        continue;
+                    }
                     int key = el.GetFirstChild<ParagraphProperties>().GetFirstChild<NumberingProperties>().GetFirstChild<NumberingId>().Val;
                     listEl[key] = ((DocumentFormat.OpenXml.Wordprocessing.Paragraph)el).ParagraphId.Value;
                 }
@@ -92,7 +102,8 @@ namespace ConverterToXml.Converters
                         {
                             case "DocumentFormat.OpenXml.Wordprocessing.Paragraph":
 
-                                if (element.GetFirstChild<ParagraphProperties>() != null) // список / не список
+                                if (element.GetFirstChild<ParagraphProperties>() != null && element.GetFirstChild<ParagraphProperties>()
+                                    .GetFirstChild<NumberingProperties>() != null) // список / не список
                                 {
                                     if (element.GetFirstChild<ParagraphProperties>().GetFirstChild<NumberingProperties>().GetFirstChild<NumberingId>().Val != CurrentListID)
                                     {
