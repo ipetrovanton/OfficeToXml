@@ -148,6 +148,10 @@ namespace ConverterToXml.Converters
 
         public string ConvertByFile(string path)
         {
+            if (!Path.IsPathFullyQualified(path))
+            {
+                path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+            }
             using (FileStream fs = File.OpenRead(path))
             {
                 return Convert(fs);

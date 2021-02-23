@@ -9,11 +9,14 @@ namespace ConverterToXml.Test
     public class OdtToXmlTest
     {
         [Fact]
-        public void XlsxConverterTest_NotNull()
+        public void OdtConverterTest_NotNull()
         {
             OdtToXml converter = new OdtToXml();
-            string curDir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            string path = curDir + @"/Files/odt1.odt";
+            string path = @$"Files/odt1.odt";
+            if (!Path.IsPathFullyQualified(path))
+            {
+                path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+            }
 
             using (FileStream fs = new FileStream(path, FileMode.Open))
             {

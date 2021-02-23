@@ -18,6 +18,10 @@ namespace ConverterToXml.Converters
 
         public string ConvertByFile(string path)
         {
+            if (!Path.IsPathFullyQualified(path))
+            {
+                path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+            }
             using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 DocToDocx docToDocx = new DocToDocx();

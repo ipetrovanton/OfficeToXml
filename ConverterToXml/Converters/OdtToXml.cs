@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Xml;
@@ -14,6 +16,14 @@ namespace ConverterToXML
             using (Stream stream = new MemoryStream(content))
             {
                 return ClearXml(stream);
+            }
+        }
+
+        public string ConvertByFile(string path)
+        {
+            using (FileStream fs = File.OpenRead(path))
+            {
+                return Convert(fs);
             }
         }
 
@@ -39,165 +49,112 @@ namespace ConverterToXML
         /// </summary>
         /// <param name="xmlStream"></param>
         /// <param name="charset"></param>
-        /// <returns></returns>
+        /// <returns>Result as <see cref="string"/>.</returns>
         private string ClearXml(Stream xmlStream, string charset = "UTF-8")
         {
-            StringBuilder sb = new StringBuilder(1000); // Врядли будет меньше 1k символов
-            XmlDocument xDoc = new XmlDocument();
-            xDoc.Load(xmlStream);
-            XmlNode text = xDoc.GetElementsByTagName("office:body")[0].FirstChild;
-            sb.Append($"<?xml version=\"1.0\" encoding=\"{charset}\" standalone=\"yes\"?>");
-            sb.Append("<documents><document>");
-            // Основной метод для очистки разметки xml
-            ClearText(text, sb);
-            sb.Append("</document></documents>");
+            // Создаем настройки XmlWriter
+            XmlWriterSettings settings = new XmlWriterSettings();
+            // Необходимый параметр для формирования вложенности тегов
+            settings.ConformanceLevel = ConformanceLevel.Auto;
+            // XmlWriter будем вести запись в StringBuilder
+            StringBuilder sb = new StringBuilder();
+
+            using (XmlWriter writer = XmlWriter.Create(sb, settings))
+            {
+                XmlReader reader = XmlReader.Create(xmlStream);
+                reader.MoveToContent();
+                SkipExtra(reader);
+                while (reader.Read())
+                {
+                    MethodSwitcher(reader, writer);
+                }
+            }
             return sb.ToString();
         }
 
         /// <summary>
-        /// Выбираем подходящий метод разбора текста в зависимости от тега
+        /// Метод прокручивает xml до тега body.
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="sb"></param>
-        private void ClearText(XmlNode text, StringBuilder sb)
+        /// <param name="reader">Текущий <see cref="XmlReader"/>.</param>
+        private void SkipExtra(XmlReader reader)
         {
-            foreach (XmlNode node in text.ChildNodes)
+            reader.ReadToFollowing("office:body");
+        }
+
+        /// <summary>
+        /// Выбираем подходящий метод разбора текста в зависимости от <see cref="XmlNodeType"/>.
+        /// </summary>
+        /// <param name="reader"><see cref="XmlReader"/>.</param>
+        /// <param name="writer"><see cref="XmlWriter"/>.</param>
+        private void MethodSwitcher(XmlReader reader, XmlWriter writer)
+        {
+            switch (reader.NodeType)
             {
-                switch (node.Name)
-                {
-                    case "text:p":
-                        ParagraphClear(node, sb);
-                        continue;
-                    case "table:table":
-                        TableClear(node, sb);
-                        continue;
-                    case "text:list":
-                        ListClear(node, sb);
-                        continue;
-                    default: continue;
-                }
+                case XmlNodeType.Element:
+                    if (!reader.IsEmptyElement || reader.Name == "text:s")
+                    {
+                        TagWriter(reader, writer);
+                    }
+                    break;
+                case XmlNodeType.EndElement:
+                    if (tags.Contains(reader.LocalName))
+                    {
+                        writer.WriteEndElement();
+                        writer.Flush();
+                    }
+                    break;
+                case XmlNodeType.Text:
+                    writer.WriteString(reader.Value);
+                    break;
+                default: break;
             }
         }
 
         /// <summary>
-        /// В теге <text:p> иногда попадаются другие теги для мета-сведений:
-        /// их мы игнорим, рекурсивно двигаясь до тега <p>
+        /// Метод открывает теги в <see cref="XmlWriter"/>.
         /// </summary>
-        /// <param name="p"></param>
-        /// <param name="sb"></param>
-        private void ParagraphClear(XmlNode p, StringBuilder sb)
+        /// <param name="reader"><see cref="XmlReader"/>.</param>
+        /// <param name="writer"><see cref="XmlWriter"/>.</param>
+        private void TagWriter(XmlReader reader, XmlWriter writer)
         {
-            if (!p.HasChildNodes)
-                sb.Append($"<p>{p.InnerText}</p>");
-            else
+            switch (reader.LocalName)
             {
-                foreach (XmlNode node in p.ChildNodes)
-                {
-                    ParagraphClear(node, sb);
-                }
+                case "p":
+                    writer.WriteStartElement("p");
+                    break;
+                case "table":
+                    writer.WriteStartElement("table");
+                    break;
+                case "table-row":
+                    writer.WriteStartElement("row");
+                    break;
+                case "table-cell":
+                    writer.WriteStartElement("cell");
+                    break;
+                case "list":
+                    writer.WriteStartElement("list");
+                    break;
+                case "list-item":
+                    writer.WriteStartElement("item");
+                    break;
+                case "s":
+                    writer.WriteString(" ");
+                    break;
+                default: break;
             }
         }
 
         /// <summary>
-        /// Обработка таблицы
+        /// <see cref="XmlReader.LocalName"/> для корректного закрытия тегов.
         /// </summary>
-        /// <param name="table"></param>
-        /// <param name="sb"></param>
-        private void TableClear(XmlNode table, StringBuilder sb)
+        private readonly List<string> tags = new List<string>()
         {
-            sb.Append("<table>");
-            foreach (XmlNode row in table.ChildNodes)
-            {
-                // не обрабатываем лишние теги
-                if (row.Name != "table:table-row")
-                    continue;
-                RowClear(row, sb);
-            }
-            sb.Append("</table>");
-        }
-
-        /// <summary>
-        /// Обработка строк. 
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="sb"></param>
-        private void RowClear(XmlNode row, StringBuilder sb)
-        {
-            sb.Append("<row>");
-            foreach (XmlNode cell in row.ChildNodes)
-            {
-                // не обрабатываем лишние теги
-                if (cell.Name != "table:table-cell")
-                    continue;
-                CellClear(cell, sb);
-            }
-            sb.Append("</row>");
-        }
-
-        /// <summary>
-        /// Обработка ячеек таблицы
-        /// </summary>
-        /// <param name="cell"></param>
-        /// <param name="sb"></param>
-        private void CellClear(XmlNode cell, StringBuilder sb)
-        {
-            sb.Append("<cell>");
-            ParagraphClear(cell.FirstChild, sb);
-            sb.Append("</cell>");
-        }
-
-        /// <summary>
-        /// Обработка списка.
-        /// </summary>
-        /// <param name="list"></param>
-        /// <param name="sb"></param>
-        private void ListClear(XmlNode list, StringBuilder sb)
-        {
-            sb.Append("<list>");
-            foreach (XmlNode xmlNode in list.ChildNodes)
-            {
-                // внутри одного списка может быть еще один список, поэтому рекурсия
-                switch (xmlNode.Name)
-                {
-                    case "text:list":
-                        ListClear(xmlNode, sb);
-                        continue;
-                }
-                ListItemClear(xmlNode, sb);
-            }
-            sb.Append("</list>");
-        }
-
-        /// <summary>
-        /// ОБработка элемента списка
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="sb"></param>
-        private void ListItemClear(XmlNode item, StringBuilder sb)
-        {
-            sb.Append("<list-item>");
-            foreach (XmlNode node in item.ChildNodes)
-            {
-                // внутри одного элемента списка может быть другой список или параграф
-                switch (node.Name)
-                {
-                    case "text:p":
-                        ParagraphClear(node, sb);
-                        break;
-                    case "text:list":
-                        ListClear(node, sb);
-                        break;
-                }
-            }
-            sb.Append("</list-item>");
-        }
-
-        public string ConvertByFile(string path)
-        {
-            using (FileStream fs = File.OpenRead(path))
-            {
-                return Convert(fs);
-            }
-        }
+            "p",
+            "table",
+            "table-row",
+            "table-cell",
+            "list",
+            "list-item"
+        };
     }
 }
