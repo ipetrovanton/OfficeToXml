@@ -48,9 +48,8 @@ namespace ConverterToXML
         /// Обработка xml
         /// </summary>
         /// <param name="xmlStream"></param>
-        /// <param name="charset"></param>
         /// <returns>Result as <see cref="string"/>.</returns>
-        private string ClearXml(Stream xmlStream, string charset = "UTF-8")
+        private string ClearXml(Stream xmlStream)
         {
             // Создаем настройки XmlWriter
             XmlWriterSettings settings = new XmlWriterSettings();
@@ -62,8 +61,7 @@ namespace ConverterToXML
             using (XmlWriter writer = XmlWriter.Create(sb, settings))
             {
                 XmlReader reader = XmlReader.Create(xmlStream);
-                reader.MoveToContent();
-                SkipExtra(reader);
+                reader.ReadToFollowing("office:body");
                 while (reader.Read())
                 {
                     MethodSwitcher(reader, writer);
@@ -109,6 +107,7 @@ namespace ConverterToXML
                 default: break;
             }
         }
+
 
         /// <summary>
         /// Метод открывает теги в <see cref="XmlWriter"/>.
