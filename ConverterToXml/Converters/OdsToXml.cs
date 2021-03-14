@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Xml;
@@ -40,73 +41,109 @@ namespace ConverterToXml.Converters
                 return ms.ToArray();
             }
         }
+
         /// <summary>
-        /// Обработка xml
+        /// Обработка xml.
         /// </summary>
         /// <param name="xmlStream"></param>
-        /// <param name="charset"></param>
-        /// <returns></returns>
-        private string ClearXml(Stream xmlStream, string charset = "UTF-8")
+        /// <returns>Result as <see cref="string"/>.</returns>
+        private string ClearXml(Stream xmlStream)
         {
-            StringBuilder sb = new StringBuilder(1000); // Врядли будет меньше 1k символов
-            XmlDocument xDoc = new XmlDocument();
-            xDoc.Load(xmlStream);
-            var spreadsheet = xDoc.GetElementsByTagName("office:spreadsheet")[0];
-            XmlNodeList lists = spreadsheet.ChildNodes;
-            sb.Append($"<?xml version=\"1.0\" encoding=\"{charset}\" standalone=\"yes\"?>");
-            sb.Append("<documents><document>");
-            foreach (XmlElement list in lists)
+            // Создаем настройки XmlWriter
+            XmlWriterSettings settings = new XmlWriterSettings();
+            // Необходимый параметр для формирования вложенности тегов
+            settings.ConformanceLevel = ConformanceLevel.Auto;
+            // XmlWriter будем вести запись в StringBuilder
+            StringBuilder sb = new StringBuilder();
+
+            using (XmlWriter writer = XmlWriter.Create(sb, settings))
             {
-                ClearLists(list, sb);
+                XmlReader reader = XmlReader.Create(xmlStream);
+                // пропускаем часть content.xml, которая содержит метатеги и теги стилей. Переходим сразу к содежимому
+                reader.ReadToFollowing("office:spreadsheet"); 
+                while (reader.Read())
+                {
+                    MethodSwitcher(reader, writer);
+                }
             }
-            sb.Append("</document></documents>");
             return sb.ToString();
         }
 
         /// <summary>
-        /// Обработка листов (таблиц)
+        /// Выбираем подходящий метод разбора текста в зависимости от <see cref="XmlNodeType"/>.
         /// </summary>
-        /// <param name="list"></param>
-        /// <param name="sb"></param>
-        private void ClearLists(XmlElement list, StringBuilder sb)
+        /// <param name="reader"><see cref="XmlReader"/>.</param>
+        /// <param name="writer"><see cref="XmlWriter"/>.</param>
+        private void MethodSwitcher(XmlReader reader, XmlWriter writer)
         {
-            if (list.LocalName != "table")
-                return;
-            sb.Append($"<list name=\"{list.GetAttribute("table:name")}\">");
-            foreach (XmlElement row in list.ChildNodes)
+            switch (reader.NodeType)
             {
-                ClearRow(row, sb);
+                case XmlNodeType.Element:
+                    if (!reader.IsEmptyElement || reader.Name == "text:s")
+                    {
+                        TagWriter(reader, writer);
+                    }
+                    break;
+                case XmlNodeType.EndElement:
+                    if (tags.Contains(reader.LocalName))
+                    {
+                        writer.WriteEndElement();
+                        writer.Flush();
+                    }
+                    break;
+                case XmlNodeType.Text:
+                    writer.WriteString(reader.Value);
+                    break;
+                default: break;
             }
-            sb.Append($"</list name=\"{list.GetAttribute("table:name")}\">");
         }
 
         /// <summary>
-        /// Обработка строк
+        /// Метод открывает теги в <see cref="XmlWriter"/>.
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="sb"></param>
-        private void ClearRow(XmlElement row, StringBuilder sb)
+        /// <param name="reader"><see cref="XmlReader"/>.</param>
+        /// <param name="writer"><see cref="XmlWriter"/>.</param>
+        private void TagWriter(XmlReader reader, XmlWriter writer)
         {
-            if (row.LocalName != "table-row")
-                return;
-            sb.Append(@"<row>");
-            foreach (XmlElement cell in row.ChildNodes)
+            switch (reader.LocalName)
             {
-                ClearCell(cell, sb);
+                case "p":
+                    writer.WriteStartElement("p");
+                    break;
+                case "table":
+                    writer.WriteStartElement("table");
+                    writer.WriteAttributeString("name", reader.GetAttribute("table:name"));
+                    break;
+                case "table-row":
+                    writer.WriteStartElement("row");
+                    break;
+                case "table-cell":
+                    writer.WriteStartElement("cell");
+                    break;
+                case "list":
+                    writer.WriteStartElement("list");
+                    break;
+                case "list-item":
+                    writer.WriteStartElement("item");
+                    break;
+                case "s":
+                    writer.WriteString(" ");
+                    break;
+                default: break;
             }
-            sb.Append(@"</row>");
         }
-
+        
         /// <summary>
-        /// Обработка ячеек
+        /// <see cref="XmlReader.LocalName"/> для корректного закрытия тегов.
         /// </summary>
-        /// <param name="cell"></param>
-        /// <param name="sb"></param>
-        private void ClearCell(XmlElement cell, StringBuilder sb)
+        private readonly List<string> tags = new List<string>()
         {
-            if (cell.LocalName != "table-cell" || !cell.HasChildNodes)
-                return;
-            sb.Append($"<cell>{cell.InnerText}</cell>");
-        }
+            "p",
+            "table",
+            "table-row",
+            "table-cell",
+            "list",
+            "list-item"
+        };
     }
 }

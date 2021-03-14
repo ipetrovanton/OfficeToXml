@@ -61,7 +61,7 @@ namespace ConverterToXML
             using (XmlWriter writer = XmlWriter.Create(sb, settings))
             {
                 XmlReader reader = XmlReader.Create(xmlStream);
-                reader.ReadToFollowing("office:body");
+                SkipExtra(reader);
                 while (reader.Read())
                 {
                     MethodSwitcher(reader, writer);
